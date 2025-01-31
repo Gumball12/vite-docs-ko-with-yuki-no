@@ -1,25 +1,44 @@
-name: Sync
+name: yuki-no
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "*/5 * * * *" # Runs every 5 minutes
+  workflow_dispatch: # Allows manual trigger
 
 jobs:
-  ryu-cho:
-    name: Ryu Cho
+  yuki-no:
+    name: Yuki-no
     runs-on: ubuntu-latest
     steps:
-      - uses: vuejs-translations/ryu-cho@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
+          node-version: 22
+
+      - uses: pnpm/action-setup@v4.0.0
+        with:
+          version: 9.15.3
+
+      - uses: Gumball12/yuki-no@v1
+        with:
+          # GitHub token for authentication (uses repository's token)
           access-token: ${{ secrets.GITHUB_TOKEN }}
+
+          # Required: Git user info
           username: github-actions
           email: "action@github.com"
 
-          upstream-repo: https://github.com/vitejs/docs-ko.git
+          # Required: Repository where issues will be created
+          head-repo: https://github.com/Gumball12/vite-docs-ko-with-yuki-no.git
+
+          # Required: Source repository to track changes from
+          upstream-repo: https://github.com/vitejs/vite.git
+
+          # Optional: Source repository's branch (defaults to 'main')
           upstream-repo-branch: main
 
-          head-repo: https://github.com/vitejs/vite
-          head-repo-branch: main
-          track-from: 0cbd81895ecb462f93b4cb9522576b305f984f3f
+          # Optional: Only track changes in specific paths (defaults to project root)
           path-starts-with: docs/
-          workflow-name: ryu-cho
+
+          # Required: Initial commit to start tracking from
+          initial-commit: f19ffbcf3111df45206e95909592b2b75ec76e10
